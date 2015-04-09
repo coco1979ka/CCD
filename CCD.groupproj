@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{0F422077-F90F-46B7-BF4D-F365CAAA7E5C}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Geometry.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Test\GeometryTests.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Geometry">
+        <MSBuild Projects="Geometry.dproj"/>
+    </Target>
+    <Target Name="Geometry:Clean">
+        <MSBuild Projects="Geometry.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Geometry:Make">
+        <MSBuild Projects="Geometry.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GeometryTests">
+        <MSBuild Projects="Test\GeometryTests.dproj"/>
+    </Target>
+    <Target Name="GeometryTests:Clean">
+        <MSBuild Projects="Test\GeometryTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GeometryTests:Make">
+        <MSBuild Projects="Test\GeometryTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Geometry;GeometryTests"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Geometry:Clean;GeometryTests:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Geometry:Make;GeometryTests:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
