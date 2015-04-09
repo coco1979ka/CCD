@@ -9,6 +9,15 @@
         <Projects Include="Test\GeometryTests.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Refactoring1.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Exceptions.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\GuestBook.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +44,41 @@
     <Target Name="GeometryTests:Make">
         <MSBuild Projects="Test\GeometryTests.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Refactoring1">
+        <MSBuild Projects="Refactoring1.dproj"/>
+    </Target>
+    <Target Name="Refactoring1:Clean">
+        <MSBuild Projects="Refactoring1.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Refactoring1:Make">
+        <MSBuild Projects="Refactoring1.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Exceptions">
+        <MSBuild Projects="Exceptions.dproj"/>
+    </Target>
+    <Target Name="Exceptions:Clean">
+        <MSBuild Projects="Exceptions.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Exceptions:Make">
+        <MSBuild Projects="Exceptions.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="GuestBook">
+        <MSBuild Projects="..\GuestBook.dproj"/>
+    </Target>
+    <Target Name="GuestBook:Clean">
+        <MSBuild Projects="..\GuestBook.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GuestBook:Make">
+        <MSBuild Projects="..\GuestBook.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Geometry;GeometryTests"/>
+        <CallTarget Targets="Geometry;GeometryTests;Refactoring1;Exceptions;GuestBook"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Geometry:Clean;GeometryTests:Clean"/>
+        <CallTarget Targets="Geometry:Clean;GeometryTests:Clean;Refactoring1:Clean;Exceptions:Clean;GuestBook:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Geometry:Make;GeometryTests:Make"/>
+        <CallTarget Targets="Geometry:Make;GeometryTests:Make;Refactoring1:Make;Exceptions:Make;GuestBook:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
