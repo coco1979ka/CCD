@@ -20,13 +20,14 @@ type
 implementation
 
 uses
+  StrUtils,
   SysUtils;
 
 { TComment }
 
 function TComment.ContainsSpam: Boolean;
 begin
-  Result := Pos('Viagra', FContent) > 0;
+  Result := ContainsText(FContent, 'Viagra');
 end;
 
 constructor TComment.Create(Content: string);
