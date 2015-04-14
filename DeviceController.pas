@@ -3,14 +3,20 @@ unit DeviceController;
 interface
 
 uses
+  SysUtils,
   Generics.Collections,
   DeviceAPI;
 
 type
+  EDeviceShutDownException = class(Exception)
+  end;
+
   TDeviceController = class
   private
     FDeviceNameHandleMap: TDictionary<string, THandle>;
+    function DoRetrieveDeviceRecord(const Handle: THandle): TDeviceInfo;
     function GetDeviceHandle(DeviceName: string): THandle;
+    procedure TryToShutDown;
   public
     constructor Create;
     destructor Destroy; override;
@@ -18,9 +24,6 @@ type
   end;
 
 implementation
-
-uses
-  SysUtils;
 
 const
   INVALID_HANDLE = 0;
@@ -39,20 +42,35 @@ begin
   inherited;
 end;
 
+function TDeviceController.DoRetrieveDeviceRecord(const Handle: THandle):
+    TDeviceInfo;
+begin
+  Result := RetrieveDeviceRecord(Handle);
+end;
+
 function TDeviceController.GetDeviceHandle(DeviceName: string): THandle;
 begin
-  FDeviceNameHandleMap.TryGetValue(DeviceName, Result);
+  if not FDeviceNameHandleMap.TryGetValue(DeviceName, Result) then
+    raise EDeviceShutDownException.Create('Device Handle not found');
 end;
 
 procedure TDeviceController.SendShutDown;
+begin
+  try
+    TryToShutDown;
+  except
+    on E: EDeviceShutDownException do
+      Writeln(E.Message);
+  end;
+end;
+
+procedure TDeviceController.TryToShutDown;
 var
-  Handle : THandle;
-  Device : TDeviceInfo;
+  Handle: THandle;
+  Device: TDeviceInfo;
 begin
   Handle := GetDeviceHandle(DEV1);
-  if(Handle <> INVALID_HANDLE) then
-  begin
-    Device := RetrieveDeviceRecord(Handle);
+  Device := DoRetrieveDeviceRecord(Handle);
     if (Device.Status <> TDeviceStatus.Suspended) then
     begin
       if not PauseDevice(Handle) then
@@ -66,11 +84,6 @@ begin
     begin
       Writeln('Device suspended.');
     end;
-  end
-  else
-  begin
-    Writeln('Invalid device' + DEV1);
-  end;
 end;
 
 
