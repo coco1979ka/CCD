@@ -22,6 +22,8 @@ type
 
   TTestCaching = class(TTestCase)
   private
+    FStartPoint: TPoint;
+    FEndPoint: TPoint;
     FLineListeningFake: TLineListeningFake;
     FCachedLine: TBaseLine;
   protected
@@ -37,26 +39,46 @@ implementation
 { TTestCaching }
 
 procedure TTestCaching.CalculationShouldBeExecutedIfPointChanges;
+var
+  NewPoint: TPoint;
 begin
   FLineListeningFake.Reset;
+  FCachedLine.GetLength;
+  //When Endpoint changes
+  NewPoint := TPoint.Create(1,1);
+  FCachedLine.EndPoint := NewPoint;
+  FCachedLine.GetLength;
+  //Execution of Getlength should be called twice
   CheckEquals(2, FLineListeningFake.NumberOfCalculations);
-end;
-
-procedure TTestCaching.SetUp;
-begin
-  inherited;
-  FLineListeningFake := TLineListeningFake.Create;
-  FCachedLine := TCachedLine.Create(FLineListeningFake);
+  NewPoint.Free;
 end;
 
 procedure TTestCaching.ShouldUseCachedResultIfPointsAreNotChanged;
 begin
+  FLineListeningFake.Reset;
+  FCachedLine.GetLength;
+  FCachedLine.GetLength;
   CheckEquals(1, FLineListeningFake.NumberOfCalculations);
+end;
+
+procedure TTestCaching.SetUp;
+var
+  Point1, Point2: TPoint;
+begin
+  inherited;
+  FStartPoint := TPoint.Create(0,0);
+  FEndPoint := TPoint.Create(1,0);
+  FLineListeningFake := TLineListeningFake.Create;
+  FCachedLine := TCachedLine.Create(FLineListeningFake);
+  FCachedLine.StartPoint := FStartPoint;
+  FCachedLine.EndPoint := FEndPoint;
 end;
 
 procedure TTestCaching.TearDown;
 begin
   inherited;
+  FStartPoint.Free;
+  FEndPoint.Free;
   FCachedLine.Free;
   FLineListeningFake.Free;
 end;
