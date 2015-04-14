@@ -15,6 +15,7 @@ type
   private
     FDeviceNameHandleMap: TDictionary<string, THandle>;
     function DoRetrieveDeviceRecord(const Handle: THandle): TDeviceInfo;
+    procedure DoShutDown(const Handle: THandle; var Device: TDeviceInfo);
     function GetDeviceHandle(DeviceName: string): THandle;
     procedure TryToShutDown;
   public
@@ -29,11 +30,11 @@ const
   INVALID_HANDLE = 0;
   DEV1 = 'MyDevice';
 
-{ TDeviceController }
+  { TDeviceController }
 
 constructor TDeviceController.Create;
 begin
-  FDeviceNameHandleMap := TDictionary<string,THandle>.Create;
+  FDeviceNameHandleMap := TDictionary<string, THandle>.Create;
 end;
 
 destructor TDeviceController.Destroy;
@@ -42,10 +43,23 @@ begin
   inherited;
 end;
 
-function TDeviceController.DoRetrieveDeviceRecord(const Handle: THandle):
-    TDeviceInfo;
+function TDeviceController.DoRetrieveDeviceRecord(const Handle: THandle)
+  : TDeviceInfo;
 begin
   Result := RetrieveDeviceRecord(Handle);
+end;
+
+procedure TDeviceController.DoShutDown(const Handle: THandle; var Device: TDeviceInfo);
+begin
+  if (Device.Status = TDeviceStatus.Suspended) then
+    raise EDeviceShutDownException.Create('Device already suspended');
+  if not PauseDevice(Handle) then
+    Writeln('Could not pause device');
+  if not ClearDeviceWorkqueue(Handle) then
+    Writeln('Could not clear working queue. Code: ' +
+      IntToStr(GetLastErrorCode));
+  if not CloseDevice(Handle) then
+    Writeln('Could not close device');
 end;
 
 function TDeviceController.GetDeviceHandle(DeviceName: string): THandle;
@@ -71,21 +85,7 @@ var
 begin
   Handle := GetDeviceHandle(DEV1);
   Device := DoRetrieveDeviceRecord(Handle);
-    if (Device.Status <> TDeviceStatus.Suspended) then
-    begin
-      if not PauseDevice(Handle) then
-        Writeln('Could not pause device');
-      if not ClearDeviceWorkqueue(Handle) then
-        Writeln('Could not clear working queue. Code: ' + IntToStr(GetLastErrorCode));
-      if not CloseDevice(Handle) then
-        Writeln('Could not close device');
-    end
-    else
-    begin
-      Writeln('Device suspended.');
-    end;
+  DoShutDown(Handle, Device);
 end;
-
-
 
 end.
