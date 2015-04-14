@@ -50,7 +50,7 @@ end;
 procedure TLine.SetStartPoint(const Value: TPoint);
 begin
   FStartPoint := Value;
-  FChanged := False;
+  FChanged := True;
 end;
 
 end.
