@@ -19,6 +19,8 @@ function TCommentChecker.IsValid(Comment: TComment): Boolean;
 begin
   if Comment.IsEmpty then
     Exit(False);
+  if Comment.ContainsSpam then
+    Exit(False);
   Exit(True);
 end;
 

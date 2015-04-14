@@ -15,7 +15,9 @@ program GuestBookTests;
 {$ENDIF}
 
 uses
-  DUnitTestRunner;
+  DUnitTestRunner,
+  TestCommentChecker in 'TestCommentChecker.pas',
+  Guestbook.CommentChecker in '..\Guestbook.CommentChecker.pas';
 
 {$R *.RES}
 
