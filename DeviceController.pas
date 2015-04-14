@@ -14,6 +14,10 @@ type
   TDeviceController = class
   private
     FDeviceNameHandleMap: TDictionary<string, THandle>;
+    procedure CheckIfSuspended(var Device: TDeviceInfo);
+    procedure DoClearDeviceWorkqueue(const Handle: THandle);
+    procedure DoCloseDevice(const Handle: THandle);
+    procedure DoPauseDevice(const Handle: THandle);
     function DoRetrieveDeviceRecord(const Handle: THandle): TDeviceInfo;
     procedure DoShutDown(const Handle: THandle; var Device: TDeviceInfo);
     function GetDeviceHandle(DeviceName: string): THandle;
@@ -43,6 +47,31 @@ begin
   inherited;
 end;
 
+procedure TDeviceController.CheckIfSuspended(var Device: TDeviceInfo);
+begin
+  if (Device.Status = TDeviceStatus.Suspended) then
+    raise EDeviceShutDownException.Create('Device already suspended');
+end;
+
+procedure TDeviceController.DoClearDeviceWorkqueue(const Handle: THandle);
+begin
+  if not ClearDeviceWorkqueue(Handle) then
+    raise EDeviceShutDownException.Create('Could not clear working queue. Code: ' +
+      IntToStr(GetLastErrorCode));
+end;
+
+procedure TDeviceController.DoCloseDevice(const Handle: THandle);
+begin
+  if not CloseDevice(Handle) then
+    raise EDeviceShutDownException.Create('Could not close device');
+end;
+
+procedure TDeviceController.DoPauseDevice(const Handle: THandle);
+begin
+  if not PauseDevice(Handle) then
+    raise EDeviceShutDownException.Create('Could not pause device');
+end;
+
 function TDeviceController.DoRetrieveDeviceRecord(const Handle: THandle)
   : TDeviceInfo;
 begin
@@ -51,15 +80,10 @@ end;
 
 procedure TDeviceController.DoShutDown(const Handle: THandle; var Device: TDeviceInfo);
 begin
-  if (Device.Status = TDeviceStatus.Suspended) then
-    raise EDeviceShutDownException.Create('Device already suspended');
-  if not PauseDevice(Handle) then
-    Writeln('Could not pause device');
-  if not ClearDeviceWorkqueue(Handle) then
-    Writeln('Could not clear working queue. Code: ' +
-      IntToStr(GetLastErrorCode));
-  if not CloseDevice(Handle) then
-    Writeln('Could not close device');
+  CheckIfSuspended(Device);
+  DoPauseDevice(Handle);
+  DoClearDeviceWorkqueue(Handle);
+  DoCloseDevice(Handle);
 end;
 
 function TDeviceController.GetDeviceHandle(DeviceName: string): THandle;
