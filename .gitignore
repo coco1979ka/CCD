@@ -3,4 +3,6 @@
 GeometryTests.exe
 *.exe
 *.identcache
+*.tvsconfig
 __history/
+*.stat
