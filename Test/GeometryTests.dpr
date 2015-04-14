@@ -18,7 +18,8 @@ uses
   DUnitTestRunner,
   TestGeometry in 'TestGeometry.pas',
   Geometry.Line in '..\Geometry.Line.pas',
-  Geometry.Point in '..\Geometry.Point.pas';
+  Geometry.Point in '..\Geometry.Point.pas',
+  TestCaching in 'TestCaching.pas';
 
 {$R *.RES}
 
