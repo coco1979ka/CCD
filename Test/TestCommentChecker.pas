@@ -12,13 +12,17 @@ unit TestCommentChecker;
 interface
 
 uses
-  TestFramework, Guestbook.Comment, Guestbook.CommentChecker;
+  TestFramework,
+  Generics.Collections,
+  Guestbook.Comment,
+  Guestbook.CommentChecker;
 
 type
   // Testmethoden für Klasse TCommentChecker
 
   TestTCommentChecker = class(TTestCase)
   strict private
+    FExistingComments: TObjectList<TComment>;
     FCommentChecker: TCommentChecker;
   public
     procedure SetUp; override;
@@ -26,9 +30,24 @@ type
   published
     procedure EmptyCommentsShouldBeInvalid;
     procedure SpamCommentsShouldBeInvalid;
+    procedure DuplicatedCommentsShouldBeInvalid;
+    procedure ValidCommentShouldBeAccepted;
   end;
 
 implementation
+
+const
+  ExistingCommentContent = 'Hallo Welt!';
+
+procedure TestTCommentChecker.DuplicatedCommentsShouldBeInvalid;
+var
+  Comment: TComment;
+  IsValid: Boolean;
+begin
+  Comment := TComment.Create(ExistingCommentContent);
+  IsValid := FCommentChecker.IsValid(Comment);
+  CheckEquals(False, IsValid);
+end;
 
 procedure TestTCommentChecker.EmptyCommentsShouldBeInvalid;
 var
@@ -42,7 +61,9 @@ end;
 
 procedure TestTCommentChecker.SetUp;
 begin
-  FCommentChecker := TCommentChecker.Create;
+  FExistingComments := TObjectList<TComment>.Create;
+  FExistingComments.Add(TComment.Create(ExistingCommentContent));
+  FCommentChecker := TCommentChecker.Create(FExistingComments);
 end;
 
 procedure TestTCommentChecker.SpamCommentsShouldBeInvalid;
@@ -57,8 +78,19 @@ end;
 
 procedure TestTCommentChecker.TearDown;
 begin
+  FExistingComments.Free;
   FCommentChecker.Free;
   FCommentChecker := nil;
+end;
+
+procedure TestTCommentChecker.ValidCommentShouldBeAccepted;
+var
+  Comment: TComment;
+  IsValid: Boolean;
+begin
+  Comment := TComment.Create('Ein gültiger Kommentar');
+  IsValid := FCommentChecker.IsValid(Comment);
+  CheckEquals(True, IsValid);
 end;
 
 initialization
