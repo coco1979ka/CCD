@@ -30,6 +30,16 @@ type
     function IsPositiveFor(Comment: TComment): Boolean;
   end;
 
+  TIsEmptyCheck = class(TInterfacedObject, ICheckedAspect)
+  public
+    function IsPositiveFor(Comment: TComment): Boolean;
+  end;
+
+  TContainsSpamCheck = class(TInterfacedObject, ICheckedAspect)
+  public
+    function IsPositiveFor(Comment: TComment): Boolean;
+  end;
+
 implementation
 
 var
@@ -42,7 +52,8 @@ constructor TCommentChecker.Create(ExistingComments: TList<TComment>);
 begin
   FChecks := TList<ICheckedAspect>.Create;
   FChecks.Add(TIsDuplicatedCheck.Create(ExistingComments));
-
+  FChecks.Add(TIsEmptyCheck.Create);
+  FChecks.Add(TContainsSpamCheck.Create);
   FExistingComments := ExistingComments;
 end;
 
@@ -58,12 +69,6 @@ var
 begin
   for Check in FChecks do
     if Check.IsPositiveFor(Comment) then Exit(False);
-
-
-  if Comment.IsEmpty then
-    Exit(False);
-  if Comment.ContainsSpam then
-    Exit(False);
   Exit(True);
 end;
 
@@ -79,6 +84,18 @@ begin
   Result := not Comment.IsUnicum(FExistingComments);
 end;
 
+{ TIsEmptyCheck }
 
+function TIsEmptyCheck.IsPositiveFor(Comment: TComment): Boolean;
+begin
+  Result := Comment.IsEmpty;
+end;
+
+{ TContainsSpamCheck }
+
+function TContainsSpamCheck.IsPositiveFor(Comment: TComment): Boolean;
+begin
+  Result := Comment.ContainsSpam;
+end;
 
 end.
