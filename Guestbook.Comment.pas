@@ -41,7 +41,7 @@ end;
 
 function TComment.IsEmpty: Boolean;
 begin
-  Result := Length(FContent) > 0;
+  Result := (FContent = '');
 end;
 
 function TComment.IsUnicum(Comments: TList<TComment>): Boolean;
