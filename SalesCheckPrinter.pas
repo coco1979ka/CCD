@@ -19,6 +19,7 @@ type
 
   TSalesCheckPrinter = class
   private
+    procedure PrintAllItemsOf(List: TList<TSalesCheck>);
     procedure PrintHeader;
     procedure PrintFooter;
   public
@@ -42,7 +43,15 @@ begin
   FName := Value;
 end;
 
-{ TSalesCheckPrinter }
+procedure TSalesCheckPrinter.PrintAllItemsOf(List: TList<TSalesCheck>);
+var
+  Item: TSalesCheck;
+begin
+  for Item in List do
+  begin
+    Writeln('ID: ' + IntToStr(Item.Id) + ' - ' + Item.Name);
+  end;
+end;
 
 procedure TSalesCheckPrinter.PrintFooter;
 begin
@@ -55,14 +64,9 @@ begin
 end;
 
 procedure TSalesCheckPrinter.PrintSalesCheck(List: TList<TSalesCheck>);
-var
-  Item: TSalesCheck;
 begin
   PrintHeader;
-  for Item in List do
-  begin
-    Writeln('ID: ' + IntToStr(Item.Id) + ' - ' + Item.Name);
-  end;
+  PrintAllItemsOf(List);
   PrintFooter;
 end;
 
