@@ -8,7 +8,7 @@ uses
 type
   TestTLine = class(TTestCase)
   strict private
-    FLine: TLine;
+    FLine: TBaseLine;
   public
     procedure SetUp; override;
     procedure TearDown; override;
