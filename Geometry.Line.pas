@@ -19,7 +19,7 @@ implementation
 
 function TLine.GetLength: Double;
 begin
-  Result := Sqrt(Sqr(StartPoint.GetX - EndPoint.GetX) + Sqr(StartPoint.GetY - EndPoint.GetY));
+  Result := StartPoint.DistanceTo(EndPoint);
 end;
 
 end.

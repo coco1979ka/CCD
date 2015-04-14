@@ -11,6 +11,7 @@ type
     constructor Create(X, Y: Double);
     function GetX: Double;
     function GetY: Double;
+    function DistanceTo(Point: TPoint): Double;
   end;
 
 implementation
@@ -21,6 +22,11 @@ constructor TPoint.Create(X, Y: Double);
 begin
   FX := X;
   FY := Y;
+end;
+
+function TPoint.DistanceTo(Point: TPoint): Double;
+begin
+  Result := Sqrt(Sqr(FX - Point.GetX) + Sqr(FY - Point.GetY));
 end;
 
 function TPoint.GetX: Double;
