@@ -42,10 +42,6 @@ type
 
 implementation
 
-var
-  Comments: TList<TComment>;
-  Aspects: TList<ICheckedAspect>;
-
 { TCommentChecker }
 
 constructor TCommentChecker.Create(ExistingComments: TList<TComment>);
